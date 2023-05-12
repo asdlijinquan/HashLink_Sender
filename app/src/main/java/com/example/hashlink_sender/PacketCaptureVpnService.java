@@ -221,16 +221,16 @@ public class PacketCaptureVpnService extends VpnService {
             hashChain[packetNumber++] = hashedConcatenatedPacket;  //
         } else {
             // concatenate the previous hash with the current input and calculate the hash of the result
-            byte[] concatenated = new byte[hashChain[packetNumber].length + hashedConcatenatedPacket.length];
-            System.arraycopy(hashChain[packetNumber], 0, concatenated, 0, hashChain[packetNumber].length);
-            System.arraycopy(hashedConcatenatedPacket, 0, concatenated, hashChain[packetNumber].length, hashedConcatenatedPacket.length);
+            byte[] concatenated = new byte[hashChain[packetNumber-1].length + hashedConcatenatedPacket.length];
+            System.arraycopy(hashChain[packetNumber-1], 0, concatenated, 0, hashChain[packetNumber-1].length);
+            System.arraycopy(hashedConcatenatedPacket, 0, concatenated, hashChain[packetNumber-1].length, hashedConcatenatedPacket.length);
             hashChain[packetNumber++] = hashPacketData(concatenated);
         }
 
         // Concatenate the original packet with the hashChain
-        byte[] modifiedPacket = new byte[packetLength + hashChain[packetNumber].length];
+        byte[] modifiedPacket = new byte[packetLength + hashChain[packetNumber-1].length];
         System.arraycopy(originalPacket, 0, modifiedPacket, 0, packetLength);
-        System.arraycopy(hashChain[packetNumber], 0, modifiedPacket, packetLength, hashChain[packetNumber].length);
+        System.arraycopy(hashChain[packetNumber-1], 0, modifiedPacket, packetLength, hashChain[packetNumber-1].length);
 
         return modifiedPacket;
     }
